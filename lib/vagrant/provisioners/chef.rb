@@ -12,8 +12,9 @@ module Vagrant
         attr_accessor :validation_client_name
         attr_accessor :client_key_path
 
-        # Chef solo specific config
+        # Chef solo specific configs
         attr_accessor :cookbooks_path
+        attr_accessor :roles_path
 
         # Shared config
         attr_accessor :provisioning_path
@@ -24,6 +25,7 @@ module Vagrant
           @client_key_path = "/etc/chef/client.pem"
 
           @cookbooks_path = "cookbooks"
+          @roles_path = "roles"
           @provisioning_path = "/tmp/vagrant-chef"
           @json = {
             :instance_role => "vagrant",

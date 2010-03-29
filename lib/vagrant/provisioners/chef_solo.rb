@@ -15,14 +15,18 @@ module Vagrant
 
       def share_cookbook_folders
         host_cookbook_paths.each_with_index do |cookbook, i|
-          env.config.vm.share_folder("vagrant-chef-solo-#{i}", cookbook_path(i), cookbook)
+          env.config.vm.share_folder("vagrant-chef-solo-cookbook-#{i}", cookbook_path(i), cookbook)
         end
+        
+        env.config.vm.share_folder("vagrant-chef-solo-roles", role_path,
+                                   File.expand_path(env.config.chef.roles_path, env.root_path))
       end
 
       def setup_solo_config
         solo_file = <<-solo
 file_cache_path "#{env.config.chef.provisioning_path}"
 cookbook_path #{cookbooks_path}
+role_path "#{role_path}"
 solo
 
         logger.info "Uploading chef-solo configuration script..."
@@ -50,7 +54,7 @@ solo
       def cookbook_path(i)
         File.join(env.config.chef.provisioning_path, "cookbooks-#{i}")
       end
-
+      
       def cookbooks_path
         result = []
         host_cookbook_paths.each_with_index do |host_path, i|
@@ -61,6 +65,10 @@ solo
         # same as JSON, so we can just convert to JSON here and use that
         result = result[0].to_s if result.length == 1
         result.to_json
+      end
+
+      def role_path
+        File.join(env.config.chef.provisioning_path, "roles")
       end
     end
   end
